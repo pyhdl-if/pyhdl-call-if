@@ -1,0 +1,257 @@
+# vsim -trace_dpi 1 -c -do "run -a; quit -f" top -sv_lib /project/tools/python/3.12.0/lib/libpython3.12 
+# Start time: 09:57:30 on Feb 10,2024
+# Loading /tmp/mballance@oatfieldi9.localdomain_dpi_499633/linux_x86_64_gcc-7.4.0/export_tramp.so
+# ** Note: (vsim-8009) Loading existing optimized design _opt
+# //  Questa Intel Starter FPGA Edition-64
+# //  Version 2021.2 linux_x86_64 Apr 14 2021
+# //
+# //  Copyright 1991-2021 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  QuestaSim and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# Loading sv_std.std
+# Loading work.pyhdl_call_if(fast)
+# Loading work.top(fast)
+# Compiling /tmp/mballance@oatfieldi9.localdomain_dpi_499633/linux_x86_64_gcc-7.4.0/exportwrapper.c
+# Loading /tmp/mballance@oatfieldi9.localdomain_dpi_499633/linux_x86_64_gcc-7.4.0/vsim_auto_compile.so
+# Loading /project/tools/python/3.12.0/lib/libpython3.12.so
+# DPI_TRACE: DPI out of the blue call mode = 0.
+# run -a
+# DPI_TRACE: Thread DPI state is initialized for import calls to 'pyhdl_call_if::Py_Initialize'. 
+# 
+# DPI_TRACE: =================>>> entering DPI-C import function call 'Py_Initialize'  ... 
+# DPI_TRACE: called from line '41' of file '../../src/hdl_call_if/share/sv/pyhdl_call_if.sv'. 
+# 
+# 
+# 
+# DPI_TRACE: <<<================= exiting DPI-C import function call 'Py_Initialize' ... 
+# 
+# 
+# init_pkg
+# 
+# DPI_TRACE: =================>>> entering DPI-C import function call 'PyImport_ImportModule'  ... 
+# DPI_TRACE: called from line '45' of file '../../src/hdl_call_if/share/sv/pyhdl_call_if.sv'. 
+# DPI_TRACE:     input arg 'name' is (char*) = 'hdl_call_if'
+# 
+# 
+# hdl_call_if
+# 
+# DPI_TRACE:     return arg 'PyImport_ImportModule' is (void*) = '0xebb93d30'
+# 
+# DPI_TRACE: <<<================= exiting DPI-C import function call 'PyImport_ImportModule' ... 
+# 
+# 
+# hdl_call_if=140737148173616
+# 
+# DPI_TRACE: =================>>> entering DPI-C import function call 'PyObject_GetAttrString'  ... 
+# DPI_TRACE: called from line '51' of file '../../src/hdl_call_if/share/sv/pyhdl_call_if.sv'. 
+# DPI_TRACE:     input arg 'base' is (void*) = '0xebb93d30'
+# DPI_TRACE:     input arg 'attr' is (char*) = '__sv_init'
+# 
+# 
+# 
+# DPI_TRACE:     return arg 'PyObject_GetAttrString' is (void*) = '0xebb78e00'
+# 
+# DPI_TRACE: <<<================= exiting DPI-C import function call 'PyObject_GetAttrString' ... 
+# 
+# 
+# 
+# DPI_TRACE: =================>>> entering DPI-C import function call 'PyTuple_New'  ... 
+# DPI_TRACE: called from line '57' of file '../../src/hdl_call_if/share/sv/pyhdl_call_if.sv'. 
+# DPI_TRACE:     input arg 'sz' is (int) = '0'
+# 
+# 
+# 
+# DPI_TRACE:     return arg 'PyTuple_New' is (void*) = '0xf7b6e4a8'
+# 
+# DPI_TRACE: <<<================= exiting DPI-C import function call 'PyTuple_New' ... 
+# 
+# 
+# 
+# DPI_TRACE: =================>>> entering DPI-C import function call 'PyObject_Call'  ... 
+# DPI_TRACE: called from line '58' of file '../../src/hdl_call_if/share/sv/pyhdl_call_if.sv'. 
+# DPI_TRACE:     input arg 'target' is (void*) = '0xebb78e00'
+# DPI_TRACE:     input arg 'args' is (void*) = '0xf7b6e4a8'
+# DPI_TRACE:     input arg 'kwargs' is (void*) = '0x0'
+# 
+# 
+# __sv_init()
+# 
+# DPI_TRACE:     return arg 'PyObject_Call' is (void*) = '0xf7a76540'
+# 
+# DPI_TRACE: <<<================= exiting DPI-C import function call 'PyObject_Call' ... 
+# 
+# 
+# DPI_TRACE: Thread DPI state is initialized for import calls to 'top.svGetScope'. 
+# 
+# DPI_TRACE: =================>>> entering DPI-C import function call 'svGetScope'  ... 
+# DPI_TRACE: called from line '16' of file 'top.sv'. 
+# 
+# 
+# 
+# DPI_TRACE:     return arg 'svGetScope' is (int64_t) = '140668500705728' 
+# 
+# DPI_TRACE: <<<================= exiting DPI-C import function call 'svGetScope' ... 
+# 
+# 
+# DPI_TRACE: Thread DPI state is initialized for import calls to 'top.svGetScope'. 
+# 
+# DPI_TRACE: =================>>> entering DPI-C import function call 'svGetScope'  ... 
+# DPI_TRACE: called from line '24' of file 'top.sv'. 
+# 
+# 
+# 
+# DPI_TRACE:     return arg 'svGetScope' is (int64_t) = '140668500705728' 
+# 
+# DPI_TRACE: <<<================= exiting DPI-C import function call 'svGetScope' ... 
+# 
+# 
+# 
+# DPI_TRACE: =================>>> entering DPI-C import function call 'svGetScope'  ... 
+# DPI_TRACE: called from line '92' of file '../../src/hdl_call_if/share/sv/pyhdl_call_if.sv'. 
+# 
+# 
+# 
+# DPI_TRACE:     return arg 'svGetScope' is (int64_t) = '140668500711928' 
+# 
+# DPI_TRACE: <<<================= exiting DPI-C import function call 'svGetScope' ... 
+# 
+# 
+# CallerScope: 7feff00401c0 7feff00401c0 7feff00419f8
+# 
+# DPI_TRACE: =================>>> entering DPI-C import function call 'PyImport_ImportModule'  ... 
+# DPI_TRACE: called from line '31' of file 'top.sv'. 
+# DPI_TRACE:     input arg 'name' is (char*) = 'my_module'
+# 
+# 
+# My Module
+# 
+# DPI_TRACE:     return arg 'PyImport_ImportModule' is (void*) = '0xebb657b0'
+# 
+# DPI_TRACE: <<<================= exiting DPI-C import function call 'PyImport_ImportModule' ... 
+# 
+# 
+# 
+# DPI_TRACE: =================>>> entering DPI-C import function call 'PyObject_GetAttrString'  ... 
+# DPI_TRACE: called from line '36' of file 'top.sv'. 
+# DPI_TRACE:     input arg 'base' is (void*) = '0xebb657b0'
+# DPI_TRACE:     input arg 'attr' is (char*) = 'my_method'
+# 
+# 
+# 
+# DPI_TRACE:     return arg 'PyObject_GetAttrString' is (void*) = '0xeb9a6340'
+# 
+# DPI_TRACE: <<<================= exiting DPI-C import function call 'PyObject_GetAttrString' ... 
+# 
+# 
+# 
+# DPI_TRACE: =================>>> entering DPI-C import function call 'PyLong_FromUnsignedLongLong'  ... 
+# DPI_TRACE: called from line '38' of file 'top.sv'. 
+# DPI_TRACE:     input arg 'val' is (int64_t) = '140668500705728' 
+# 
+# 
+# 
+# DPI_TRACE:     return arg 'PyLong_FromUnsignedLongLong' is (void*) = '0xebb870f0'
+# 
+# DPI_TRACE: <<<================= exiting DPI-C import function call 'PyLong_FromUnsignedLongLong' ... 
+# 
+# 
+# 
+# DPI_TRACE: =================>>> entering DPI-C import function call 'PyTuple_New'  ... 
+# DPI_TRACE: called from line '28' of file '../../src/hdl_call_if/share/sv/pyhdl_call_if.sv'. 
+# DPI_TRACE:     input arg 'sz' is (int) = '1'
+# 
+# 
+# 
+# DPI_TRACE:     return arg 'PyTuple_New' is (void*) = '0xebd32d40'
+# 
+# DPI_TRACE: <<<================= exiting DPI-C import function call 'PyTuple_New' ... 
+# 
+# 
+# 
+# DPI_TRACE: =================>>> entering DPI-C import function call 'PyTuple_SetItem'  ... 
+# DPI_TRACE: called from line '30' of file '../../src/hdl_call_if/share/sv/pyhdl_call_if.sv'. 
+# DPI_TRACE:     input arg 't' is (void*) = '0xebd32d40'
+# DPI_TRACE:     input arg 'pos' is (int) = '0'
+# DPI_TRACE:     input arg 'i' is (void*) = '0xebb870f0'
+# 
+# 
+# 
+# DPI_TRACE:     return arg 'PyTuple_SetItem' is (int) = '0'
+# 
+# DPI_TRACE: <<<================= exiting DPI-C import function call 'PyTuple_SetItem' ... 
+# 
+# 
+# 
+# DPI_TRACE: =================>>> entering DPI-C import function call 'PyObject_Call'  ... 
+# DPI_TRACE: called from line '37' of file 'top.sv'. 
+# DPI_TRACE:     input arg 'target' is (void*) = '0xeb9a6340'
+# DPI_TRACE:     input arg 'args' is (void*) = '0xebd32d40'
+# DPI_TRACE:     input arg 'kwargs' is (void*) = '0x0'
+# 
+# 
+# my_method 140668500705728
+# lib: <CDLL 'None', handle 7ffff7ffe1d0 at 0x7fffebb8fd40>
+# scope: 140668500711928
+# 
+# DPI_TRACE: =================>>> entering DPI-C export function call 'pyhdl_queue_runnable'  ... 
+# DPI_TRACE: called from line '37' of file 'top.sv'. 
+# DPI_TRACE:     input arg 'p0' is (void*) = '0xebd76200'
+# 
+# 
+# pyhdl_queue_runnable
+# 
+# DPI_TRACE: <<<================= exiting DPI-C export function call 'pyhdl_queue_runnable' ... 
+# 
+# 
+# 
+# DPI_TRACE:     return arg 'PyObject_Call' is (void*) = '0xf7a76540'
+# 
+# DPI_TRACE: <<<================= exiting DPI-C import function call 'PyObject_Call' ... 
+# 
+# 
+# 
+# DPI_TRACE: =================>>> entering DPI-C import function call 'PyTuple_New'  ... 
+# DPI_TRACE: called from line '66' of file '../../src/hdl_call_if/share/sv/pyhdl_call_if.sv'. 
+# DPI_TRACE:     input arg 'sz' is (int) = '0'
+# 
+# 
+# 
+# DPI_TRACE:     return arg 'PyTuple_New' is (void*) = '0xf7b6e4a8'
+# 
+# DPI_TRACE: <<<================= exiting DPI-C import function call 'PyTuple_New' ... 
+# 
+# 
+# --> get
+# <-- get
+# --> get
+# 
+# DPI_TRACE: =================>>> entering DPI-C import function call 'PyObject_Call'  ... 
+# DPI_TRACE: called from line '77' of file '../../src/hdl_call_if/share/sv/pyhdl_call_if.sv'. 
+# DPI_TRACE:     input arg 'target' is (void*) = '0xebd76200'
+# DPI_TRACE:     input arg 'args' is (void*) = '0xf7b6e4a8'
+# DPI_TRACE:     input arg 'kwargs' is (void*) = '0x0'
+# 
+# 
+# --> thread_1 <CDLL 'None', handle 7ffff7ffe1d0 at 0x7fffebb8fd40> scope=0x7feff00401c0
+# --> svSetScope
+# <-- svSetScope
+# ** Fatal: (vsim-3757) The DPI exported task 'timed_task' must be called from a context imported *task*. A call from a context imported *function* was detected. The caller's scope is top.
+# The nearest DPI import tf up the call chain is at line 77 of file ../../src/hdl_call_if/share/sv/pyhdl_call_if.sv
+#    Time: 0 ns  Iteration: 0  Process: /pyhdl_call_if::pyhdl_call_if_run/#FORK#76(#ublk#245217238#76)_7feff0065ad File: ../../src/hdl_call_if/share/sv//pyhdl_call_if_dpi.svh
+# Fatal error in Module pyhdl_call_if at ../../src/hdl_call_if/share/sv//pyhdl_call_if_dpi.svh line 26
+# 
+# HDL call sequence:
+# Stopped at ../../src/hdl_call_if/share/sv//pyhdl_call_if_dpi.svh 26 Module pyhdl_call_if
+# called from  ../../src/hdl_call_if/share/sv/pyhdl_call_if.sv 77 Module pyhdl_call_if
+# 
+#  quit -f
+# End time: 09:57:31 on Feb 10,2024, Elapsed time: 0:00:01
+# Errors: 1, Warnings: 0

@@ -1,0 +1,18 @@
+CAPI=2:
+
+name: pyhdl-if::call
+
+filesets:
+  hvl:
+    files:
+    - "pyhdl_call_if.sv":
+        include_path: "."
+    file_type: systemVerilogSource
+    depend:
+      - pyhdl-if::pi
+
+targets:
+  default:
+    filesets:
+      - hvl
+
