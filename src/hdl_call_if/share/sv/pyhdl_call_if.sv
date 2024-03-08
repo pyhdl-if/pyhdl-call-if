@@ -39,6 +39,28 @@ package pyhdl_call_if;
     bit is_init = init_pkg();
     PyObject hdl_call_if;
 
+    function PyObject pyhdl_call_if_invoke_hdl_f(
+        PyObject        obj,
+        string          method_name,
+        PyObject        args);
+    endfunction
+    export "DPI-C" function pyhdl_call_if_invoke_hdl_f;
+
+    function int pyhdl_call_if_invoke_hdl_t(
+        PyObject        obj,
+        string          method_name,
+        PyObject        args);
+    endfunction
+    export "DPI-C" function pyhdl_call_if_invoke_hdl_t;
+
+    function void pyhdl_call_if_response_py_t(
+        PyObject        obj,
+        int             call_id,
+        PyObject        result);
+    endfunction
+    export "DPI-C" function pyhdl_call_if_response_py_t;
+
+
     function automatic bit init_pkg();
         PyObject __sv_init = null;
 
