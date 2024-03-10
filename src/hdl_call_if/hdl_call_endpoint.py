@@ -1,5 +1,5 @@
 #****************************************************************************
-#* backend.py
+#* hdl_call_endpoint.py
 #*
 #* Copyright 2023 Matthew Ballance and Contributors
 #*
@@ -20,8 +20,27 @@
 #*
 #****************************************************************************
 
-class Backend(object):
+class HdlCallEndpoint(object):
 
-    def __init__(self):
-        pass
+    def __init__(self, name):
+        self._name = name
+        self._backend = None
+
+    @property
+    def name(self):
+        return self._name
+    
+    @property
+    def backend(self):
+        from hdl_pi_if.backend import Backend
+        if self._backend is None:
+            self._backend = Backend.inst()
+        return self._backend
+    
+    def idle(self):
+        be = self.backend
+    
+    
+
+
 

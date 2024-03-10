@@ -1,5 +1,5 @@
 #****************************************************************************
-#* decorators.py
+#* context.py
 #*
 #* Copyright 2023 Matthew Ballance and Contributors
 #*
@@ -19,18 +19,27 @@
 #*     Author: 
 #*
 #****************************************************************************
+from hdl_call_if.hdl_call_endpoint import HdlCallEndpoint
 
-def api(*args, **kwargs):
-    pass
+class Context(object):
+    _inst = None
 
-def impfunc(*args, **kwargs):
-    pass
+    def __init__(self):
+        self._endpoints = []
+        self._object_rgy_type_m = {}
+        self._object_rgy_name_m = {}
+        pass
 
-def imptask(*args, **kwargs):
-    pass
+    def addEndpoint(self, ep : HdlCallEndpoint):
+        self._endpoints.append(ep)
 
-def expfunc(*args, **kwargs):
-    pass
+    def getObjectsByType(self, typename):
+        pass
+    
+    @classmethod
+    def inst(cls):
+        if cls._inst is None:
+            cls._inst = Context()
+        return cls._inst
 
-def exptask(*args, **kwargs):
-    pass
+
