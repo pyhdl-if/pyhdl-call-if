@@ -17,15 +17,25 @@ class MyC(object):
         try:
             ret = proxy.invoke_hdl_f("outbound", ())
         except Exception as e:
-            print("Exception: %s" % str(e), flush=True)
+            print("Exception(inbound): %s" % str(e), flush=True)
 
         return ret
     
     async def inbound_t(self):
         print("--> inbound_t");
 
+        if hasattr(self, "__proxy"):
+            print("has", flush=True)
+            proxy = getattr(self, "__proxy")
+        else:
+            print("doesn't have", flush=True)
+
         for i in range(10):
-            await self.outbound_t()
+            await proxy.invoke_hdl_t(
+                "outbound_t",
+                ()
+            )
+#            await self.outbound_t()
 
         print("<-- inbound_t");
     

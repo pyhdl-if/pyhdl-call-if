@@ -48,15 +48,15 @@ class HdlCallEndpointDPI(HdlCallEndpoint):
             self.pyhdl_call_if_invoke_hdl_t = exe_l.pyhdl_call_if_invoke_hdl_t
             self.pyhdl_call_if_invoke_hdl_t.restype = ctypes.c_int
             self.pyhdl_call_if_invoke_hdl_t.argtypes = (
-                ctypes.c_void_p,
+                ctypes.c_int,
+                ctypes.py_object,
                 ctypes.c_char_p,
-                ctypes.c_void_p)
+                ctypes.py_object)
             self.pyhdl_call_if_response_py_t = exe_l.pyhdl_call_if_response_py_t
             self.pyhdl_call_if_response_py_t.restype = None
-            self.pyhdl_call_if_invoke_hdl_t.argtypes = (
-                ctypes.c_void_p,
+            self.pyhdl_call_if_response_py_t.argtypes = (
                 ctypes.c_int,
-                ctypes.c_void_p)
+                ctypes.py_object)
         except Exception as e:
             print("Exception: %s" % str(e), flush=True)
         
@@ -70,8 +70,27 @@ class HdlCallEndpointDPI(HdlCallEndpoint):
             ret = self.pyhdl_call_if_invoke_hdl_f(obj_id, method_name.encode(), args)
             print("<-- invoke_hdl_f", flush=True)
         except Exception as e:
-            print("Exception: %s" % str(e), flush=True)
+            print("Exception(invoke_hdl_f): %s" % str(e), flush=True)
         return ret
+    
+    def invoke_hdl_t(self, 
+                     obj_id, 
+                     evt_obj,
+                     method_name, 
+                     args):
+        self.svSetScope(self.scope)
+        self.pyhdl_call_if_invoke_hdl_t(
+            obj_id,
+            evt_obj,
+            method_name.encode(),
+            args)
+    
+    def response_py_t(self, sem_id, res):
+        try:
+            self.svSetScope(self.scope)
+            self.pyhdl_call_if_response_py_t(sem_id, res)
+        except Exception as e:
+            print("Exception(response_py): %s" % str(e), flush=True)
 
     # Note: implementation of object creation is
     # a bit different between environments

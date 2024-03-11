@@ -1,6 +1,7 @@
 
 from .impl.context import Context
 from .impl.hdl_call_endpoint_dpi import HdlCallEndpointDPI
+from .decorators import *
 
 def __sv_init(scope):
     ep = None

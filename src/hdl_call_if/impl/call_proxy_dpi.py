@@ -40,6 +40,20 @@ class CallProxyDPI(CallProxy):
             args)
         pass
 
+    async def invoke_hdl_t(
+            self,
+            method_name,
+            args):
+        from hdl_pi_if.backend import Backend
+        be = Backend.inst();
+        evt = be.mkEvent()
+
+        self.ep.invoke_hdl_t(self.obj_id, evt, method_name, args)
+
+        print("--> evt.wait", flush=True)
+        await evt.wait()
+        print("<-- evt.wait", flush=True)
+
     async def invoke_py_t_wrap(
             self,
             sem_id,
@@ -47,6 +61,7 @@ class CallProxyDPI(CallProxy):
             args):
         print("--> await method", flush=True)
         res = await m(*args)
+        self.ep.response_py_t(sem_id, res)
         print("<-- await method", flush=True)
 
     def invoke_py_t(
@@ -54,11 +69,18 @@ class CallProxyDPI(CallProxy):
             sem_id,
             method_name,
             args):
+        from hdl_pi_if.backend import Backend
+        be = Backend.inst()
+
         print("--> invoke_py_t", flush=True)
         m = getattr(self.target, method_name, None)
 
         if m is None:
             print("Error: failed to find method %s" % method_name, flush=True)
+        
+        be.mkTask(self.invoke_py_t_wrap(sem_id, m, args))
+        be.idle()
+
         print("<-- invoke_py_t", flush=True)
         
 

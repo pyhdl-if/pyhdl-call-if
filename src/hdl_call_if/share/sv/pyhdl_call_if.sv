@@ -25,11 +25,46 @@ package pyhdl_call_if;
     class PyObjectW;
     endclass
 
+    typedef class PyHdlCallApiIF;
+
+    class pyhdl_call_if_TaskCallClosure;
+        PyHdlCallApiIF  m_obj;
+        PyObject        m_evt_obj;
+        string          m_method_name;
+        PyObject        m_args;
+
+        function new(
+            PyHdlCallApiIF  obj,
+            PyObject        evt_obj,
+            string          method_name,
+            PyObject        args);
+            m_obj = obj;
+            m_evt_obj = evt_obj;
+            m_method_name = method_name;
+            m_args = args;
+        endfunction
+
+        task run();
+            PyObject evt_obj_set = PyObject_GetAttrString(m_evt_obj, "set");
+            PyObject args = PyTuple_New(0);
+
+            $display("--> run");
+            m_obj.invokeTask(m_method_name, m_args);
+            $display("<-- run");
+
+            PyObject_Call(evt_obj_set, args, null);
+        endtask
+    endclass
+
+    // Empty base class
     class PyHdlCallEmpty;
     endclass
 
     interface class PyHdlCallApiIF;
         pure virtual function PyObject invokeFunc(
+            string      method,
+            PyObject    args);
+        pure virtual task invokeTask(
             string      method,
             PyObject    args);
     endclass
@@ -50,16 +85,8 @@ package pyhdl_call_if;
 
     import "DPI-C" context function longint unsigned svGetScope();
 
-    function automatic PyObject pyhdl_mkTuple(PyObject objs[$]);
-        PyObject t = PyTuple_New(objs.size());
-        foreach (objs[i]) begin
-            void'(PyTuple_SetItem(t, i, objs[i]));
-        end
-        return t;
-    endfunction
-
     bit is_init = init_pkg();
-    PyObject __hdl_call_if;
+    PyObject            __hdl_call_if;
     PyObject            __ep_h;
     PyHdlCallApiIF      __objects[];
     semaphore           __callsem[];
@@ -77,17 +104,29 @@ package pyhdl_call_if;
     endfunction
     export "DPI-C" function pyhdl_call_if_invoke_hdl_f;
 
-    function int pyhdl_call_if_invoke_hdl_t(
-        PyObject        obj,
+    function void pyhdl_call_if_invoke_hdl_t(
+        int             obj_id,
+        PyObject        evt_obj,
         string          method_name,
         PyObject        args);
+        pyhdl_call_if_TaskCallClosure closure;
+        
+        closure = new(
+            __objects[obj_id],
+            evt_obj,
+            method_name,
+            args);
+        
+        pyhdl_call_if_queue_runnable(closure);
     endfunction
     export "DPI-C" function pyhdl_call_if_invoke_hdl_t;
 
     function void pyhdl_call_if_response_py_t(
-        PyObject        obj,
-        int             call_id,
-        PyObject        result);
+        int             sem_id,
+        PyObject        res);
+        $display("--> pyhdl_call_if_response_py_t: %0d", sem_id);
+        pyhdl_call_if_setSem(sem_id, res);
+        $display("<-- pyhdl_call_if_response_py_t: %0d", sem_id);
     endfunction
     export "DPI-C" function pyhdl_call_if_response_py_t;
 
@@ -106,6 +145,8 @@ package pyhdl_call_if;
         PyTuple_SetItem(proxy_args, 2, args);
         
         PyObject_Call(invoke_py_t, proxy_args, null);
+
+        pyhdl_call_if_waitSem(sem_id, res);
     endtask
 
 
@@ -155,37 +196,35 @@ package pyhdl_call_if;
     endfunction
 
     bit __thread_running = 0;
-    mailbox #(PyObject)         invoke_q = new();
+    mailbox #(pyhdl_call_if_TaskCallClosure)         invoke_q = new();
     task automatic pyhdl_call_if_run();
         PyObject obj, null_t, res;
         null_t = PyTuple_New(0);
 
         forever begin
-            automatic PyObject obj_t;
+            automatic pyhdl_call_if_TaskCallClosure closure_t;
             $display("--> get");
-            invoke_q.get(obj);
+            invoke_q.get(closure_t);
             $display("<-- get");
-            obj_t = obj;
 
             fork
                 begin
-                    res = PyObject_Call(obj_t, null_t, null);
+                    closure_t.run();
                     $display("res: %0p", res);
                 end
             join_none
         end
     endtask
 
-    function automatic void pyhdl_call_if_queue_runnable(PyObject obj);
+    function automatic void pyhdl_call_if_queue_runnable(pyhdl_call_if_TaskCallClosure closure);
         $display("pyhdl_queue_runnable");
 
         if (!__thread_running && $time > 0) begin
             $display("PyHDL-Call_IF Fatal Error: SV event loop not running at time %0t", $time);
             $finish;
         end
-        void'(invoke_q.try_put(obj));
+        void'(invoke_q.try_put(closure));
     endfunction
-    export "DPI-C" function pyhdl_call_if_queue_runnable;
 
     function void pyhdl_call_if_start();
         if (!__thread_running) begin
@@ -199,9 +238,6 @@ package pyhdl_call_if;
 
     function automatic int allocObjId(PyHdlCallApiIF sv_api_if);
         int ret = -1, i;
-        // if (__objects.size() == 0) begin
-        //     __objects = new[64];
-        // end
 
         for (i=0; i<__objects.size(); i++) begin
             if (__objects[i] == null) begin
@@ -231,6 +267,9 @@ package pyhdl_call_if;
         if (ret == -1) begin
             __callsem = new[__callsem.size()+64](__callsem);
             __callsem_res = new[__callsem_res.size()+64](__callsem_res);
+            for (int j=i; j<__callsem.size(); j++) begin
+                __callsem[j] = new();
+            end
             ret = i;
         end
 
@@ -244,6 +283,7 @@ package pyhdl_call_if;
         output PyObject     res);
         __callsem[id].get();
         res = __callsem_res[id];
+        __callsem[id] = null;
     endtask
 
     function automatic pyhdl_call_if_setSem(

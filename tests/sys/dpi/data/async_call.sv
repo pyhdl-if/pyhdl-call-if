@@ -35,6 +35,12 @@ module async_call;
                 args);
         endtask
 
+        task outbound_t();
+            $display("--> outbound_t %0t", $time);
+            #10ns;
+            $display("<-- outbound_t %0t", $time);
+        endtask
+
         virtual function PyObject invokeFunc(
             string      method,
             PyObject    args);
@@ -53,15 +59,30 @@ module async_call;
             return ret;
         endfunction
 
+        virtual task invokeTask(
+            string      method,
+            PyObject    args);
+            $display("invokeTask: %0s", method);
+            case (method)
+                "outbound_t": begin
+                    outbound_t();
+                end
+            endcase
+        endtask
+
     endclass
 
     initial begin
         automatic MyC ci = new();
         automatic int val;
 
+        pyhdl_call_if_start();
+
         val = ci.inbound();
         $display("val: %0d", val);
+        $display("--> ci.inbound_t %0t", $time);
         ci.inbound_t();
+        $display("<-- ci.inbound_t %0t", $time);
     end
 
 endmodule
