@@ -20,6 +20,8 @@
 #*
 #****************************************************************************
 import importlib
+from hdl_call_if.impl.gen_sv_class import GenSVClass
+from hdl_call_if.impl.api_def_rgy import ApiDefRgy
 
 class CmdGenSV(object):
 
@@ -29,7 +31,26 @@ class CmdGenSV(object):
     def __call__(self, args):
 
         # First, load up the specified modules
-        if not hasattr(args, "module") or args.module is None or len(ags.module) == 0:
+        if not hasattr(args, "module") or args.module is None or len(args.module) == 0:
             raise Exception("Must specify modules to load")
+
+        for m in args.module:
+            try:
+                importlib.import_module(m)
+            except ImportError as e:
+                raise Exception("Failed to import module \"%s\": %s" % (
+                    m, str(e)))
+
+        apis = ApiDefRgy.inst().getApis()
+
+        if len(apis) == 0:
+            raise Exception("No APIs defined")
+
+        with open(args.output, "w") as fp:
+            gen = GenSVClass(fp)
+
+            for api in apis:
+                gen.gen(api)
+
         pass
 

@@ -19,8 +19,12 @@
 #*     Author: 
 #*
 #****************************************************************************
+import ctypes
 from .ctor import Ctor
+from .imp_func_impl import ImpFuncImpl
+from .imp_task_impl import ImpTaskImpl
 from .method_def import MethodDef, MethodKind
+from typing import get_type_hints
 
 class MethodDecoratorImpl(object):
 
@@ -30,6 +34,32 @@ class MethodDecoratorImpl(object):
         self._kwargs = kwargs
 
     def __call__(self, T):
-        md = MethodDef(self._kind, T.__name__, None, [])
+
+        code = T.__code__
+        hints = get_type_hints(T)
+
+        if "return" in hints.keys():
+            rtype = hints["return"]
+        else:
+            rtype = None
+
+        params = []
+        for i in range(1,code.co_argcount):
+            pname = code.co_varnames[i]
+            if pname not in hints.keys():
+                raise Exception("Method parameter %s.%s is untyped" % (
+                    T.__name__,
+                    pname))
+            params.append((pname, hints[pname]))
+
+        md = MethodDef(self._kind, T, T.__name__, rtype, params)
         Ctor.inst().addMethodDef(md)
 
+        if self._kind == MethodKind.ImpFunc:
+            closure = ImpFuncImpl(md)
+            return lambda self, *args, **kwargs: closure(self, *args, **kwargs)
+        elif self._kind == MethodKind.ImpTask:
+            closure = ImpTaskImpl(md)
+            return lambda self, *args, **kwargs: closure(self, *args, **kwargs)
+        else:
+            return T

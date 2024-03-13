@@ -1,5 +1,6 @@
 import asyncio
 import ctypes
+import io
 import os
 import pytest
 import sys
@@ -31,6 +32,9 @@ def test_single_api(decorator_init):
     @hci.api
     class API(object):
 
+        def __init__(self, a : ctypes.c_int, b : ctypes.c_int):
+            pass
+
         @hci.impfunc
         def callout(self, 
                     a : ctypes.c_int, 
@@ -43,7 +47,7 @@ def test_single_api(decorator_init):
             pass
 
 
-    a = API()
+#    a = API()
 #    a.callout(1, 2, 3)
 #    asyncio.new_event_loop().run_until_complete(a.callout_t(2))
 
@@ -53,5 +57,10 @@ def test_single_api(decorator_init):
     assert apis[0].name == "API"
     assert len(apis[0].methods) == 2
 
+    from hdl_call_if.impl.gen_sv_class import GenSVClass
+    out = io.StringIO()
+    gen = GenSVClass(out)
+    gen.gen(apis[0])
 
-    pass
+    print("Result:\n%s\n" % out.getvalue())
+

@@ -22,8 +22,9 @@
 
 class ApiDef(object):
 
-    def __init__(self, fullname, methods):
+    def __init__(self, fullname, init_params, methods):
         self._fullname = fullname
+        self._init_params = init_params
         self._methods = methods
 
     @property
@@ -38,6 +39,10 @@ class ApiDef(object):
         else:
             return self._fullname
         
+    @property
+    def init_params(self):
+        return self._init_params
+
     @property
     def methods(self):
         return self._methods

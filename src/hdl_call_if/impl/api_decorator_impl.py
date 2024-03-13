@@ -19,6 +19,8 @@
 #*     Author: 
 #*
 #****************************************************************************
+import inspect
+from typing import get_type_hints
 from .ctor import Ctor
 from .api_def import ApiDef
 from .api_def_rgy import ApiDefRgy
@@ -32,7 +34,23 @@ class ApiDecoratorImpl(object):
         ctor = Ctor.inst()
         rgy = ApiDefRgy.inst()
 
-        ad = ApiDef(T.__qualname__, ctor.getMethodDefs())
+#        print(inspect.getargs(T.__init__))
+        init_params = []
+        init_m = getattr(T, "__init__")
+        if hasattr(init_m, "__code__"):
+            init_co = init_m.__code__
+
+            type_hints = get_type_hints(init_m)
+            for i in range(1,init_co.co_argcount):
+                name = init_co.co_varnames[i]
+                if name not in type_hints.keys():
+                    raise Exception("parameter %s is missing a type specification" % name)
+                init_params.append((name, type_hints[name]))
+
+        ad = ApiDef(
+            T.__qualname__, 
+            init_params,
+            ctor.getMethodDefs())
         rgy.addApiDef(ad)
 
         return T

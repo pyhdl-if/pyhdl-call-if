@@ -81,7 +81,7 @@ package pyhdl_call_if;
         endfunction
     endclass
 
-    `include "PyObjectWrapper.svh"
+//    `include "PyObjectWrapper.svh"
 
     import "DPI-C" context function longint unsigned svGetScope();
 
@@ -149,6 +149,22 @@ package pyhdl_call_if;
         pyhdl_call_if_waitSem(sem_id, res);
     endtask
 
+    function automatic PyObject pyhdl_call_if_invokePyFunc(
+        input PyObject      obj,
+        input string        method,
+        input PyObject      args);
+        PyObject res;
+        PyObject proxy_h = PyObject_GetAttrString(obj, "__proxy");
+        PyObject invoke_py_f = PyObject_GetAttrString(proxy_h, "invoke_py_f");
+        PyObject proxy_args = PyTuple_New(2);
+
+        PyTuple_SetItem(proxy_args, 0, PyUnicode_FromString(method));
+        PyTuple_SetItem(proxy_args, 1, args);
+        
+        res = PyObject_Call(invoke_py_f, proxy_args, null);
+
+        return res;
+    endfunction
 
     function automatic bit init_pkg();
         PyObject __sv_init = null;

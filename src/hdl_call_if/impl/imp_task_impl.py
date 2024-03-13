@@ -1,5 +1,5 @@
 #****************************************************************************
-#* method_def.py
+#* imp_task_impl.py
 #*
 #* Copyright 2023 Matthew Ballance and Contributors
 #*
@@ -19,44 +19,25 @@
 #*     Author: 
 #*
 #****************************************************************************
-from typing import List, Tuple
-from enum import Enum, auto
+from hdl_call_if.call_proxy import CallProxy
+from .method_def import MethodDef
 
-class MethodKind(Enum):
-    ImpTask = auto()
-    ExpTask = auto()
-    ImpFunc = auto()
-    ExpFunc = auto()
+class ImpTaskImpl(object):
 
-class MethodDef(object):
-
-    def __init__(self, 
-                 kind : MethodKind,
-                 T,
-                 name : str,
-                 rtype,
-                 params : List[Tuple[str, object]]):
-        self._kind = kind
-        self._name = name
-        self._rtype = rtype
-        self._params = params
+    def __init__(self, md : MethodDef):
+        self._md = md
         pass
 
-    @property
-    def name(self):
-        return self._name
+    async def __call__(self, api_self, *args, **kwargs):
+        if not hasattr(api_self, "__proxy") or getattr(api_self, "__proxy") is None:
+            raise Exception("Class is not bound to an HDL object")
+        
+        if len(kwargs) != 0:
+            raise Exception("Only positional arguments are supported")
 
-    @property
-    def kind(self):
-        return self._kind 
-    
-    @property
-    def rtype(self):
-        return self._rtype
-    
-    @property
-    def params(self):
-        return self._params
-    
-
+        proxy : CallProxy = getattr(api_self, "__proxy") 
+        return await proxy.invoke_hdl_t(
+            self._md.name,
+            args
+        )
 
