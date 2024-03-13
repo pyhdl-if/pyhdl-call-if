@@ -1,5 +1,8 @@
 
 package api_pkg;
+    import pyhdl_dpi_if::*;
+    import pyhdl_call_if::*;
+
     `include "api_gen_1.svh"
 
 endpackage

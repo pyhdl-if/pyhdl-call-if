@@ -86,6 +86,7 @@ def test_api_gen_1(dirconfig):
     flow.sim.dpi_libs.extend(PkgInfoRgy.inst().getLibs("dpi"))
     flow.sim.addLibDirs(PkgInfoRgy.inst().getLibDirs("dpi"))
     flow.sim.append_pathenv("PYTHONPATH", os.path.join(proj_dir, "src"))
+    flow.sim.append_pathenv("PYTHONPATH", os.path.join(proj_dir, "packages/pyhdl-pi-if/python"))
 
 
     args = flow.sim.mkRunArgs(dirconfig.rundir())
