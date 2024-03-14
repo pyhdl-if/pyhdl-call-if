@@ -21,6 +21,7 @@
 #****************************************************************************
 import ctypes
 from hdl_call_if.hdl_call_endpoint import HdlCallEndpoint
+import hdl_pi_if.dpi as dpi
 
 class HdlCallEndpointDPI(HdlCallEndpoint):
 
@@ -32,13 +33,14 @@ class HdlCallEndpointDPI(HdlCallEndpoint):
 
         exe_l = ctypes.cdll.LoadLibrary(None)
         if not hasattr(exe_l, "pyhdl_call_if_invoke_hdl_f"):
+            print("TODO: Try DPIExportLib")
             exe_l = self._findDPIExportLib()
         try:
-            self.svSetScope = exe_l.svSetScope
-            self.svSetScope.restype = None
-            self.svSetScope.argtypes = (
-                ctypes.c_void_p,
-            )
+            # self.svSetScope = exe_l.svSetScope
+            # self.svSetScope.restype = None
+            # self.svSetScope.argtypes = (
+            #     ctypes.c_void_p,
+            # )
             self.pyhdl_call_if_invoke_hdl_f = exe_l.pyhdl_call_if_invoke_hdl_f
             self.pyhdl_call_if_invoke_hdl_f.restype = ctypes.py_object
             self.pyhdl_call_if_invoke_hdl_f.argtypes = (
@@ -58,13 +60,13 @@ class HdlCallEndpointDPI(HdlCallEndpoint):
                 ctypes.c_int,
                 ctypes.py_object)
         except Exception as e:
-            print("Exception: %s" % str(e), flush=True)
+            print("Exception(__init__): %s" % str(e), flush=True)
         
     def invoke_hdl_f(self, obj_id : int, method_name : str, args : tuple):
         ret = None
         try:
             print("--> svSetScope", flush=True)
-            self.svSetScope(self.scope)
+            dpi.svSetScope(self.scope)
             print("<-- svSetScope", flush=True)
             print("--> invoke_hdl_f", flush=True)
             ret = self.pyhdl_call_if_invoke_hdl_f(obj_id, method_name.encode(), args)
@@ -78,7 +80,7 @@ class HdlCallEndpointDPI(HdlCallEndpoint):
                      evt_obj,
                      method_name, 
                      args):
-        self.svSetScope(self.scope)
+        dpi.svSetScope(self.scope)
         self.pyhdl_call_if_invoke_hdl_t(
             obj_id,
             evt_obj,
@@ -87,7 +89,7 @@ class HdlCallEndpointDPI(HdlCallEndpoint):
     
     def response_py_t(self, sem_id, res):
         try:
-            self.svSetScope(self.scope)
+            dpi.svSetScope(self.scope)
             self.pyhdl_call_if_response_py_t(sem_id, res)
         except Exception as e:
             print("Exception(response_py): %s" % str(e), flush=True)
