@@ -33,7 +33,6 @@ class CallProxyDPI(CallProxy):
             self,
             method_name : str,
             args : tuple):
-        print("invoke_hdl_f", flush=True)
         return self.ep.invoke_hdl_f(
             self.obj_id,
             method_name, 
@@ -50,19 +49,15 @@ class CallProxyDPI(CallProxy):
 
         self.ep.invoke_hdl_t(self.obj_id, evt, method_name, args)
 
-        print("--> evt.wait", flush=True)
         await evt.wait()
-        print("<-- evt.wait", flush=True)
 
     async def invoke_py_t_wrap(
             self,
             sem_id,
             m,
             args):
-        print("--> await method", flush=True)
         res = await m(*args)
         self.ep.response_py_t(sem_id, res)
-        print("<-- await method", flush=True)
 
     def invoke_py_t(
             self,
@@ -72,7 +67,6 @@ class CallProxyDPI(CallProxy):
         from hdl_pi_if.backend import Backend
         be = Backend.inst()
 
-        print("--> invoke_py_t", flush=True)
         m = getattr(self.target, method_name, None)
 
         if m is None:
@@ -80,8 +74,6 @@ class CallProxyDPI(CallProxy):
         
         be.mkTask(self.invoke_py_t_wrap(sem_id, m, args))
         be.idle()
-
-        print("<-- invoke_py_t", flush=True)
         
 
         

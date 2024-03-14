@@ -25,7 +25,7 @@ package pyhdl_call_if;
     class PyObjectW;
     endclass
 
-    typedef class PyHdlCallApiIF;
+    typedef interface class PyHdlCallApiIF;
 
     class pyhdl_call_if_TaskCallClosure;
         PyHdlCallApiIF  m_obj;
@@ -47,12 +47,18 @@ package pyhdl_call_if;
         task run();
             PyObject evt_obj_set = PyObject_GetAttrString(m_evt_obj, "set");
             PyObject args = PyTuple_New(0);
+            PyObject res;
 
             $display("--> run");
             m_obj.invokeTask(m_method_name, m_args);
             $display("<-- run");
 
-            PyObject_Call(evt_obj_set, args, null);
+            res = PyObject_Call(evt_obj_set, args, null);
+
+            if (res == null) begin
+                $display("Internal Error: Failed to trigger pyhdl_call_if event");
+                $finish;
+            end
         endtask
     endclass
 
@@ -83,7 +89,7 @@ package pyhdl_call_if;
 
 //    `include "PyObjectWrapper.svh"
 
-    import "DPI-C" context function longint unsigned svGetScope();
+    import "DPI-C" context function chandle svGetScope();
 
     bit is_init = init_pkg();
     PyObject            __hdl_call_if;
@@ -158,8 +164,8 @@ package pyhdl_call_if;
         PyObject invoke_py_f = PyObject_GetAttrString(proxy_h, "invoke_py_f");
         PyObject proxy_args = PyTuple_New(2);
 
-        PyTuple_SetItem(proxy_args, 0, PyUnicode_FromString(method));
-        PyTuple_SetItem(proxy_args, 1, args);
+        void'(PyTuple_SetItem(proxy_args, 0, PyUnicode_FromString(method)));
+        void'(PyTuple_SetItem(proxy_args, 1, args));
         
         res = PyObject_Call(invoke_py_f, proxy_args, null);
 
@@ -188,7 +194,7 @@ package pyhdl_call_if;
         Py_IncRef(__sv_init);
         begin
             PyObject args = PyTuple_New(1);
-            PyObject scope = PyLong_FromUnsignedLongLong(svGetScope());
+            PyObject scope = PyLong_FromVoidPtr(svGetScope());
             int ret;
 
             $display("__sv_init: %p", __sv_init);
@@ -302,7 +308,7 @@ package pyhdl_call_if;
         __callsem[id] = null;
     endtask
 
-    function automatic pyhdl_call_if_setSem(
+    function automatic void pyhdl_call_if_setSem(
         input int           id,
         input PyObject      res);
         __callsem_res[id] = res;
@@ -318,13 +324,11 @@ package pyhdl_call_if;
         PyObject ret;
         int obj_id = (sv_api_if != null)?allocObjId(sv_api_if):-1;
 
-        $display("new_obj: %p", new_obj);
-
         Py_IncRef(new_obj);
         
-        PyTuple_SetItem(args, 0, cls_t);
-        PyTuple_SetItem(args, 1, PyLong_FromLong(obj_id));
-        PyTuple_SetItem(args, 2, init_args);
+        void'(PyTuple_SetItem(args, 0, cls_t));
+        void'(PyTuple_SetItem(args, 1, PyLong_FromLong(obj_id)));
+        void'(PyTuple_SetItem(args, 2, init_args));
 
         ret = PyObject_Call(new_obj, args, null);
 

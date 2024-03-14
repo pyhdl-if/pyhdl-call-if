@@ -47,8 +47,9 @@ class ApiDecoratorImpl(object):
                     raise Exception("parameter %s is missing a type specification" % name)
                 init_params.append((name, type_hints[name]))
 
+        fullname = T.__module__ + "." + T.__qualname__
         ad = ApiDef(
-            T.__qualname__, 
+            fullname,
             init_params,
             ctor.getMethodDefs())
         rgy.addApiDef(ad)

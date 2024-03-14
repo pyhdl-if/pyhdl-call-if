@@ -47,10 +47,10 @@ def test_async_call(dirconfig):
     flow.sim.dpi_libs.extend(PkgInfoRgy.inst().getLibs("dpi"))
     flow.sim.addLibDirs(PkgInfoRgy.inst().getLibDirs("dpi"))
     flow.sim.append_pathenv("PYTHONPATH", os.path.join(proj_dir, "src"))
+    flow.sim.append_pathenv("PYTHONPATH", dpi_data_dir)
 
 
     args = flow.sim.mkRunArgs(dirconfig.rundir())
-    args.append_pathenv("PYTHONPATH", dpi_data_dir)
     flow.addTaskToPhase("run.main", flow.sim.mkRunTask(args))
 
     flow.run_all()
@@ -62,7 +62,7 @@ def test_api_gen_1(dirconfig):
     proj_dir = os.path.abspath(os.path.join(dpi_tests_dir, "../../.."))
 
 
-    flow = ptv.FlowSim(dirconfig, "mti")
+    flow = ptv.FlowSim(dirconfig, "xsm")
 
     flow.addTaskToPhase("build.pre", ptv.TaskCmd(
         name="Generate Class API",
@@ -87,10 +87,9 @@ def test_api_gen_1(dirconfig):
     flow.sim.addLibDirs(PkgInfoRgy.inst().getLibDirs("dpi"))
     flow.sim.append_pathenv("PYTHONPATH", os.path.join(proj_dir, "src"))
     flow.sim.append_pathenv("PYTHONPATH", os.path.join(proj_dir, "packages/pyhdl-pi-if/python"))
-
+    flow.sim.append_pathenv("PYTHONPATH", dpi_data_dir)
 
     args = flow.sim.mkRunArgs(dirconfig.rundir())
-    args.append_pathenv("PYTHONPATH", dpi_data_dir)
     flow.addTaskToPhase("run.main", flow.sim.mkRunTask(args))
 
     flow.run_all()

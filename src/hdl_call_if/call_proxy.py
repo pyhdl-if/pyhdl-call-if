@@ -50,7 +50,12 @@ class CallProxy(object):
             method_name : str,
             args : tuple) -> object:
         """Called by the HDL environment to invoke a Python function"""
-        pass
+        m = getattr(self.target, method_name, None)
+
+        if m is None:
+            raise Exception("Failed to find method %s" % method_name)
+
+        return m(*args)
 
     def invoke_py_t(
             self,

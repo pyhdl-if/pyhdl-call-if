@@ -12,6 +12,8 @@ module api_gen_1;
 
     initial begin
         automatic MyC c = new();
+        $display("val: %0d", c.get_py_val(20));
+        $finish;
     end
 
 endmodule

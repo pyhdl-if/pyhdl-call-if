@@ -45,7 +45,7 @@ class GenSVClass(object):
         self.gen_class_wrapper(api)
 
     def gen_class_interface(self, api : ApiDef):
-        self.println("interface class I%s;" % api.name)
+        self.println("interface class I%s extends pyhdl_call_if::PyHdlCallApiIF;" % api.name)
         self.inc_ind()
         self.println()
 
@@ -83,8 +83,25 @@ class GenSVClass(object):
                 ))
             self.dec_ind()
 
+        print("API FULLNAME: %s" % api.fullname)
+
+        module_name = api.fullname
+        last_dot = module_name.rfind('.')
+        if last_dot != -1:
+            module_name = module_name[:last_dot]
+
         self.inc_ind()
-#        self.write("%sm_obj = \n")
+        self.println("pyhdl_dpi_if::PyObject __args = pyhdl_dpi_if::PyTuple_New(%d);" % len(api.init_params))
+        self.println("pyhdl_dpi_if::PyObject __cls_m = pyhdl_dpi_if::PyImport_ImportModule(\"%s\");" % module_name)
+        self.println("pyhdl_dpi_if::PyObject __cls_t;")
+        for i,p in enumerate(api.init_params):
+            self.println("void'(PyTuple_SetItem(__args, %d, %s(%s)));" % (
+                i,
+                self.sv2py_func(p[1]),
+                p[0]))
+        self.println("__cls_t = pyhdl_dpi_if::PyObject_GetAttrString(__cls_m, \"%s\");" % api.name)
+
+        self.println("m_obj = pyhdl_call_if_new(__cls_t, this, __args);")
         self.dec_ind()
         self.println("endfunction")
         self.println()
@@ -101,6 +118,7 @@ class GenSVClass(object):
         self.println("endclass")
 
     def gen_class_wrapper(self, api : ApiDef):
+#        self.println("class %sW #(type BASE_T=pyhdl_call_if::PyHdlCallEmpty) extends BASE_T implements I%s, PyHdlCallApiIF;" % (
         self.println("class %sW #(type BASE_T=pyhdl_call_if::PyHdlCallEmpty) extends BASE_T implements I%s;" % (
             api.name,
             api.name))
@@ -188,6 +206,7 @@ class GenSVClass(object):
             self.println(");")
             self.println()
 
+        self.inc_ind()
         if m.kind in [MethodKind.ImpFunc, MethodKind.ImpTask]:
             # Generate backstop logic
             pass
@@ -195,7 +214,7 @@ class GenSVClass(object):
             self.println("pyhdl_dpi_if::PyObject __res;")
             self.println("pyhdl_dpi_if::PyObject __args = PyTuple_New(%d);" % len(m.params))
             for i,p in enumerate(m.params):
-                self.println("PyTuple_SetItem(__args, %d, %s(%s));" % (
+                self.println("void'(PyTuple_SetItem(__args, %d, %s(%s)));" % (
                     i,
                     self.sv2py_func(p[1]),
                     p[0]
@@ -206,6 +225,9 @@ class GenSVClass(object):
             else:
                 self.println("__res = pyhdl_call_if::pyhdl_call_if_invokePyFunc(m_obj, \"%s\", __args);" % (
                     m.name,))
+                self.println("return %s(__res);" % self.py2sv_func(m.rtype))
+            
+        self.dec_ind()
 
 
         self.println("end%s" % (

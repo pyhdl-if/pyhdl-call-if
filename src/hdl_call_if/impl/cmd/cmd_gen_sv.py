@@ -20,6 +20,7 @@
 #*
 #****************************************************************************
 import importlib
+import os
 from hdl_call_if.impl.gen_sv_class import GenSVClass
 from hdl_call_if.impl.api_def_rgy import ApiDefRgy
 
@@ -45,6 +46,9 @@ class CmdGenSV(object):
 
         if len(apis) == 0:
             raise Exception("No APIs defined")
+
+        if not os.path.isdir(os.path.dirname(args.output)):
+            os.makedirs(os.path.dirname(args.output))
 
         with open(args.output, "w") as fp:
             gen = GenSVClass(fp)
